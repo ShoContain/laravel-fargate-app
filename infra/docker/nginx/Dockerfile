@@ -1,5 +1,5 @@
 FROM node:16-alpine as node
-FROM nginx:1.20-alpine
+FROM nginx:1.25.2-alpine3.18
 LABEL maintainer="ucan-lab <yes@u-can.pro>"
 SHELL ["/bin/ash", "-oeux", "pipefail", "-c"]
 
