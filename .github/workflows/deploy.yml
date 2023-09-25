@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/push_images_to_ecr
+      - develop
 
 env:
   AWS_REGION: ap-northeast-1
@@ -22,7 +22,7 @@ jobs:
         run: echo "ENV_NAME=prod" >> $GITHUB_ENV
 
       - name: Set env vars for dev
-        if: github.ref == 'refs/heads/feature/push_images_to_ecr'
+        if: github.ref == 'refs/heads/develop'
         run: echo "ENV_NAME=dev" >> $GITHUB_ENV
 
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
         id: cache-composer
         uses: actions/cache@v3
         with:
-          path: vendor
+          path: backend/vendor
           key: ${{ runner.os }}-composer-v1-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-v1-
