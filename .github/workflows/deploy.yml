@@ -40,9 +40,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-v1-
 
-      - name: Install Composer Dependencies        
+      - name: Install Composer Dependencies
         run: docker-compose exec -T app composer install -n --prefer-dist --no-progress --no-dev
         if: steps.cache-composer.outputs.cache-hit != 'true'
+
+      - name: Cache NPM Dependencies
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-npm-v1-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-v1-
+
+      - name: Install NPM Dependencies
+        run: docker-compose exec -T web npm ci
+        if: steps.cache-npm.outputs.cache-hit != 'true'
 
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/main'
