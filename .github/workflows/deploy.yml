@@ -17,8 +17,30 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Set env vars for prod
+        if: github.ref == 'refs/heads/main'
+        run: echo "ENV_NAME=prod" >> $GITHUB_ENV
+
+      - name: Set env vars for dev
+        if: github.ref == 'refs/heads/feature/push_images_to_ecr'
+        run: echo "ENV_NAME=dev" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
+
+      - run: docker-compose up -d --build app web
+
+      - name: Cache composer
+        id: cache-composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-v1-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-v1-
+
+      - run: docker-compose exec -T app composer install -n --prefer-dist --no-progress --no-dev
+        if: ${{ steps.cache-composer.outputs.cache-hit }} != 'true'
 
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/main'
