@@ -62,7 +62,7 @@ jobs:
 
       - name: Build NPM Dependencies
         run: |
-          docker-compose exec -T web sh -c 'npm run prod && chown -R 1001:127 "/root/.npm"'
+          docker-compose exec -T web npm run production
 
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/main'
