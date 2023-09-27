@@ -62,8 +62,7 @@ jobs:
 
       - name: Build NPM Dependencies
         run: |
-         sudo chown -R 1001:127 "/root/.npm" \
-         docker-compose exec -T web npm run prod
+          docker-compose exec -T web npm run prod
 
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/main'
@@ -88,6 +87,20 @@ jobs:
           docker build \
           --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
                                                             -f infra/docker/nginx/Dockerfile \
+                                                            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest
+                                                            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build, tag, and push php image to Amazon ECR
+        env:
+          DOCKER_BUILDKIT: 1
+          ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.SYSTEM_NAME }}-${{ env.ENV_NAME }}-${{ env.SERVICE_NAME }}-php
+        run: |
+          docker build \
+          --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
+                                                            -f infra/docker/php/Dockerfile \
                                                             -t $ECR_REGISTRY/$ECR_REPOSITORY:latest
                                                             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
