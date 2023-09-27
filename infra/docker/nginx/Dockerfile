@@ -19,4 +19,6 @@ COPY ./infra/docker/nginx/*.conf /etc/nginx/conf.d/
 
 COPY ./backend/public /work/backend/public
 
+RUN sudo chown -R 1001:127 "/root/.npm"
+
 WORKDIR /work/backend
