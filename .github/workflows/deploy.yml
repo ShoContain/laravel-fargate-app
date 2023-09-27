@@ -61,7 +61,9 @@ jobs:
         if: steps.cache-npm.outputs.cache-hit != 'true'
 
       - name: Build NPM Dependencies
-        run: docker-compose exec -T web npm run prod
+        run: |
+         sudo chown -R 1001:127 "/root/.npm" \
+         docker-compose exec -T web npm run prod
 
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/main'
