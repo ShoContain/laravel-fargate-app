@@ -19,6 +19,10 @@ COPY ./infra/docker/nginx/*.conf /etc/nginx/conf.d/
 
 COPY ./backend/public /work/backend/public
 
-RUN sudo chown -R 1001:127 "/root/.npm"
+# ユーザーを作成し、ホームディレクトリを設定
+RUN useradd -m -s /bin/bash myuser
+
+# ユーザーを切り替え
+USER myuser
 
 WORKDIR /work/backend
