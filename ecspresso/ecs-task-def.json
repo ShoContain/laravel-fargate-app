@@ -1,0 +1,103 @@
+{
+  "containerDefinitions": [
+    {
+      "cpu": 0,
+      "dependsOn": [
+        {
+          "condition": "START",
+          "containerName": "php"
+        }
+      ],
+      "essential": true,
+      "image": "637137270881.dkr.ecr.ap-northeast-1.amazonaws.com/example-prod-foobar-nginx:latest",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/example-prod-foobar/nginx",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "mountPoints": [
+        {
+          "containerPath": "/var/run/php-fpm",
+          "sourceVolume": "php-fpm-socket"
+        }
+      ],
+      "name": "nginx",
+      "portMappings": [
+        {
+          "appProtocol": "",
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "cpu": 0,
+      "essential": true,
+      "image": "637137270881.dkr.ecr.ap-northeast-1.amazonaws.com/example-prod-foobar-php:latest",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/example-prod-foobar/php",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "mountPoints": [
+        {
+          "containerPath": "/var/run/php-fpm",
+          "sourceVolume": "php-fpm-socket"
+        }
+      ],
+      "name": "php",
+      "secrets": [
+        {
+          "name": "APP_KEY",
+          "valueFrom": "/example/prod/foobar/APP_KEY"
+        },
+        {
+          "name": "APP_URL",
+          "valueFrom": "/example/prod/foobar/APP_URL"
+        },
+        {
+          "name": "APP_ENV",
+          "valueFrom": "/example/prod/foobar/APP_ENV"
+        }
+      ]
+    }
+  ],
+  "cpu": "256",
+  "executionRoleArn": "arn:aws:iam::637137270881:role/example-prod-foobar-ecs-task-execution",
+  "family": "example-prod-foobar",
+  "ipcMode": "",
+  "memory": "512",
+  "networkMode": "awsvpc",
+  "pidMode": "",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "tags": [
+    {
+      "key": "Env",
+      "value": "prod"
+    },
+    {
+      "key": "System",
+      "value": "example"
+    },
+    {
+      "key": "Name",
+      "value": "example-prod-foobar"
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::637137270881:role/example-prod-foobar-ecs-task",
+  "volumes": [
+    {
+      "host": {},
+      "name": "php-fpm-socket"
+    }
+  ]
+}
