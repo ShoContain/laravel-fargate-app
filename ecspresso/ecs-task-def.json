@@ -9,12 +9,12 @@
         }
       ],
       "essential": true,
-      "image": "637137270881.dkr.ecr.ap-northeast-1.amazonaws.com/example-prod-foobar-nginx:latest",
+      "image": "{{ app_tfstate `module.nginx.aws_ecr_repository.this.repository_url` }}:{{ must_env `IMAGE_TAG` }}",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/example-prod-foobar/nginx",
-          "awslogs-region": "ap-northeast-1",
+          "awslogs-group": "{{log_tfstate `aws_cloudwatch_log_group.nginx.name`}}",
+          "awslogs-region": "{{must_env `AWS_REGION`}}",
           "awslogs-stream-prefix": "ecs"
         }
       },
@@ -37,11 +37,11 @@
     {
       "cpu": 0,
       "essential": true,
-      "image": "637137270881.dkr.ecr.ap-northeast-1.amazonaws.com/example-prod-foobar-php:latest",
+      "image": "{{ app_tfstate `module.php.aws_ecr_repository.this.repository_url` }}:{{ must_env `IMAGE_TAG` }}",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/example-prod-foobar/php",
+          "awslogs-group": "{{log_tfstate `aws_cloudwatch_log_group.php.name`}}",
           "awslogs-region": "ap-northeast-1",
           "awslogs-stream-prefix": "ecs"
         }
@@ -56,22 +56,22 @@
       "secrets": [
         {
           "name": "APP_KEY",
-          "valueFrom": "/example/prod/foobar/APP_KEY"
+          "valueFrom": "/{{ must_env `SYSTEM_NAME`}}/{{ must_env `ENV_NAME` }}/{{ must_env `SERVICE_NAME` }}/APP_KEY"
         },
         {
           "name": "APP_URL",
-          "valueFrom": "/example/prod/foobar/APP_URL"
+          "valueFrom": "/{{ must_env `SYSTEM_NAME`}}/{{ must_env `ENV_NAME` }}/{{ must_env `SERVICE_NAME` }}/APP_URL"
         },
         {
           "name": "APP_ENV",
-          "valueFrom": "/example/prod/foobar/APP_ENV"
+          "valueFrom": "/{{ must_env `SYSTEM_NAME`}}/{{ must_env `ENV_NAME` }}/{{ must_env `SERVICE_NAME` }}/APP_ENV"
         }
       ]
     }
   ],
   "cpu": "256",
-  "executionRoleArn": "arn:aws:iam::637137270881:role/example-prod-foobar-ecs-task-execution",
-  "family": "example-prod-foobar",
+  "executionRoleArn": "{{ app_tfstate `aws_iam_role.ecs_task_execution.arn` }}",
+  "family": "{{ must_env `SYSTEM_NAME`}}-{{ must_env `ENV_NAME` }}-{{ must_env `SERVICE_NAME` }}",
   "ipcMode": "",
   "memory": "512",
   "networkMode": "awsvpc",
@@ -82,18 +82,18 @@
   "tags": [
     {
       "key": "Env",
-      "value": "prod"
+      "value": "{{ must_env `ENV_NAME` }}"
     },
     {
       "key": "System",
-      "value": "example"
+      "value": "{{ must_env `SYSTEM_NAME`}}"
     },
     {
       "key": "Name",
-      "value": "example-prod-foobar"
+      "value": "{{ must_env `SYSTEM_NAME`}}-{{ must_env `ENV_NAME` }}-{{ must_env `SERVICE_NAME` }}"
     }
   ],
-  "taskRoleArn": "arn:aws:iam::637137270881:role/example-prod-foobar-ecs-task",
+  "taskRoleArn": "{{ app_tfstate `aws_iam_role.ecs_task.arn` }}",
   "volumes": [
     {
       "host": {},

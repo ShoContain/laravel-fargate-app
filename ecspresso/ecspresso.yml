@@ -4,3 +4,26 @@ service: example-prod-foobar
 service_definition: ecs-service-def.json
 task_definition: ecs-task-def.json
 timeout: "10m0s"
+
+# s3のtfstateのパスを指定
+plugins:
+  - name: tfstate
+    config:
+      url: s3://laravel-fargate-app-terraform-637137270881/prod/app/foobar_v1.0.11.tfstate
+    func_prefix: app_
+  - name: tfstate
+    config:
+      url: s3://laravel-fargate-app-terraform-637137270881/prod/cicd/app_foobar_v1.0.11.tfstate
+    func_prefix: cicd_
+  - name: tfstate
+    config:
+      url: s3://laravel-fargate-app-terraform-637137270881/prod/log/app_foobar_v1.0.11.tfstate
+    func_prefix: log_
+  - name: tfstate
+    config:
+      url: s3://laravel-fargate-app-terraform-637137270881/prod/network/main_v1.0.11.tfstate
+    func_prefix: network_
+  - name: tfstate
+    config:
+      url: s3://laravel-fargate-app-terraform-637137270881/prod/routing/web-service-prod_click_v1.0.11.tfstate
+    func_prefix: routing_

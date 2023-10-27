@@ -26,18 +26,18 @@
     {
       "containerName": "nginx",
       "containerPort": 80,
-      "targetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-1:637137270881:targetgroup/example-prod-foobar/6a16863a3d7da134"
+      "targetGroupArn": "{{ routing_tfstate `aws_lb_target_group.foobar.arn` }}"
     }
   ],
   "networkConfiguration": {
     "awsvpcConfiguration": {
       "assignPublicIp": "DISABLED",
       "securityGroups": [
-        "sg-0930f9d5c326be4c7"
+        "{{ network_tfstate `aws_security_group.vpc.id` }}"
       ],
       "subnets": [
-        "subnet-08787f88fcc497b3d",
-        "subnet-0f65aab22900f31f5"
+        "{{ app_tfstate `data.terraform_remote_state.network_main.outputs.private_subnet_ids[0]` }}",
+        "{{ app_tfstate `data.terraform_remote_state.network_main.outputs.private_subnet_ids[1]` }}"
       ]
     }
   },
@@ -48,15 +48,15 @@
   "tags": [
     {
       "key": "Env",
-      "value": "prod"
+      "value": "{{ must_env `ENV_NAME` }}"
     },
     {
       "key": "System",
-      "value": "example"
+      "value": "{{ must_env `SYSTEM_NAME`}}"
     },
     {
       "key": "Name",
-      "value": "example-prod-foobar"
+      "value": "{{ must_env `SYSTEM_NAME`}}-{{ must_env `ENV_NAME` }}-{{ must_env `SERVICE_NAME` }}"
     }
   ]
 }
