@@ -13,10 +13,6 @@ plugins:
     func_prefix: app_
   - name: tfstate
     config:
-      url: s3://laravel-fargate-app-terraform-637137270881/prod/cicd/app_foobar_v1.0.11.tfstate
-    func_prefix: cicd_
-  - name: tfstate
-    config:
       url: s3://laravel-fargate-app-terraform-637137270881/prod/log/app_foobar_v1.0.11.tfstate
     func_prefix: log_
   - name: tfstate
