@@ -9,10 +9,11 @@ class TrustProxies extends Middleware
 {
     /**
      * The trusted proxies for this application.
+     * ロードバランサのIPアドレスが変化することがあるため、本来プロキシのIPアドレスを設定する場所でアスタリスクを設定する
      *
      * @var array<int, string>|string|null
      */
-    protected $proxies;
+    protected $proxies = "*";
 
     /**
      * The headers that should be used to detect proxies.
