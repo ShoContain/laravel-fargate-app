@@ -24,9 +24,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(UrlGenerator $url)
     {
-        if (config('app.env') === 'prod' or config('app.env') === 'stg') {
-            // asset()やurl()がhttpsで生成される
-            $url->forceScheme('https');
-        }
     }
 }
