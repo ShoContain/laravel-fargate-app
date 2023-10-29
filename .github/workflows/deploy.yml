@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/deploy_fargate
 
 env:
   AWS_REGION: ap-northeast-1
@@ -21,7 +20,7 @@ jobs:
       contents: read
     steps:
       - name: Set env vars for prod
-        # if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: echo "ENV_NAME=prod" >> $GITHUB_ENV
 
       - name: Set env vars for dev
@@ -65,7 +64,7 @@ jobs:
           docker-compose exec -T web npm run production
 
       - name: Configure AWS credentials
-        # if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
