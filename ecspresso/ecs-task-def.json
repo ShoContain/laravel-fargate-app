@@ -57,14 +57,6 @@
         {
           "name": "APP_KEY",
           "valueFrom": "/{{ must_env `SYSTEM_NAME`}}/{{ must_env `ENV_NAME` }}/{{ must_env `SERVICE_NAME` }}/APP_KEY"
-        },
-        {
-          "name": "APP_URL",
-          "valueFrom": "/{{ must_env `SYSTEM_NAME`}}/{{ must_env `ENV_NAME` }}/{{ must_env `SERVICE_NAME` }}/APP_URL"
-        },
-        {
-          "name": "APP_ENV",
-          "valueFrom": "/{{ must_env `SYSTEM_NAME`}}/{{ must_env `ENV_NAME` }}/{{ must_env `SERVICE_NAME` }}/APP_ENV"
         }
       ]
     }
