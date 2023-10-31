@@ -21,7 +21,9 @@ jobs:
     steps:
       - name: Set env vars for prod
         if: github.ref == 'refs/heads/main'
-        run: echo "ENV_NAME=prod" >> $GITHUB_ENV
+        run: |
+          echo "ENV_NAME=prod" >> $GITHUB_ENV
+          echo "VPC_CIDR=172.31.0.0/16 >> $GITHUB_ENV"
 
       - name: Set env vars for dev
         if: github.ref == 'refs/heads/develop'
