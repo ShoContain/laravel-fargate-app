@@ -113,6 +113,7 @@ jobs:
         run: |
           aws s3 cp .env.$ENV_NAME s3://laravel-fargate-app-637137270881-$SYSTEM_NAME-$ENV_NAME-$SERVICE_NAME-env-file/$IMAGE_TAG/.env
         working-directory: backend
+      
       - name: Install ecspresso
         uses: kayac/ecspresso@v2
         with:
@@ -122,13 +123,13 @@ jobs:
         run: ecspresso register --config config_$ENV_NAME.yml
         working-directory: ./ecspresso
 
-      - name: Migrate database
-        run: |
-              ecspresso run --config config_$ENV_NAME.yml \
-              --latest-task-definition \
-              --watch-container=php \
-              --overrides='{"containerOverrides": [{"name": "nginx", "command": ["nginx","-v"]},{"name": "php","command": ["php","artisan","migrate","--force"]}]}'
-        working-directory: ./ecspresso
+      # - name: Migrate database
+      #   run: |
+      #         ecspresso run --config config_$ENV_NAME.yml \
+      #         --latest-task-definition \
+      #         --watch-container=php \
+      #         --overrides='{"containerOverrides": [{"name": "nginx", "command": ["nginx","-v"]},{"name": "php","command": ["php","artisan","migrate","--force"]}]}'
+      #   working-directory: ./ecspresso
 
       - name: Deploy to AWS Fargate
         run: ecspresso deploy --config config_$ENV_NAME.yml
