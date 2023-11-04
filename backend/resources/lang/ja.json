@@ -4,5 +4,8 @@
     "Password": "パスワード",
     "Remember me": "ブラウザに記憶する",
     "Log in": "ログイン",
-    "Forgot your password?": "パスワードをお忘れですか？"
+    "Forgot your password?": "パスワードをお忘れですか？",
+    "Confirm Password": "パスワードの確認",
+    "Register": "登録",
+    "Already registered?": "すでに登録済みですか？"
 }
