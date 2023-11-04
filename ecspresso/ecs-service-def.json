@@ -12,7 +12,7 @@
       "rollback": false
     },
     "maximumPercent": 200,
-    "minimumHealthyPercent": 100
+    "minimumHealthyPercent": 50
   },
   "deploymentController": {
     "type": "ECS"
