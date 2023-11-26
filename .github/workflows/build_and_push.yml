@@ -48,12 +48,10 @@ jobs:
 
       - name: Cache Composer
         id: cache-composer
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: backend/vendor
           key: ${{ runner.os }}-composer-v1-${{ hashFiles('backend/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
 
       - name: Install composer dependencies
         if: steps.cache-composer.outputs.cache-hit != 'true'
@@ -61,12 +59,10 @@ jobs:
 
       - name: Cache NPM
         id: cache-npm
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: backend/node_modules
           key: ${{ runner.os }}-npm-v1-${{ hashFiles('backend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
 
       - name: Install npm dependencies
         if: steps.cache-npm.outputs.cache-hit != 'true'
