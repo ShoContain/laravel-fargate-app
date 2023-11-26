@@ -73,8 +73,3 @@ jobs:
         run: docker compose exec -T web npm ci
 
       - run: docker compose exec -T web npm run prod
-
-      - name: Login to Amazon ECR
-        if: github.ref == 'refs/heads/main'
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
