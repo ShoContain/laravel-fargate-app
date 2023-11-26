@@ -68,4 +68,4 @@ jobs:
         if: steps.cache-npm.outputs.cache-hit != 'true'
         run: docker compose exec -T web npm ci
 
-      - run: docker compose exec -T web npm run prodution
+      - run: docker compose exec -T web npm run production
