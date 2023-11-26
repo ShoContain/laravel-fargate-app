@@ -10,10 +10,18 @@ env:
   AWS_REGION: ap-northeast-1
 
 jobs:
-  build:
+  build-and-push:
     name: Build And Push
     runs-on: ubuntu-latest
     steps:
+      - name: Set env vars for prod
+        if: github.ref == 'refs/heads/main'
+        run: echo "ENV=prod" >> $GITHUB_ENV
+
+      - name: Set env vars for dev
+        if: github.ref == 'refs/heads/main'
+        run: echo "ENV=dev" >> $GITHUB_ENV
+
       - name: Configure AWS credentials for prod
         if: github.ref == 'refs/heads/main'
         uses: aws-actions/configure-aws-credentials@v2
@@ -33,3 +41,40 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ secrets.DEV_AWS_ASSUME_ROLE_ARN }}
           role-duration-seconds: 1800
+
+      - uses: actions/checkout@v2
+
+      - run: docker compose up -d --build app web
+
+      - name: Cache Composer
+        id: cache-composer
+        uses: actions/cache@v2
+        with:
+          path: backend/vendor
+          key: ${{ runner.os }}-composer-v1-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install composer dependencies
+        if: steps.cache-composer.outputs.cache-hit != 'true'
+        run: docker compose exec -T app composer install -n --no-dev --prefer-dist --no-progress
+
+      - name: Cache NPM
+        id: cache-npm
+        uses: actions/cache@v2
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-npm-v1-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install npm dependencies
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: docker compose exec -T web npm ci
+
+      - run: docker compose exec -T web npm run prod
+
+      - name: Login to Amazon ECR
+        if: github.ref == 'refs/heads/main'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
