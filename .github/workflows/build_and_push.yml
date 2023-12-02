@@ -83,8 +83,8 @@ jobs:
           ECR_REPOSITORY: ${{ env.SYSTEM_NAME }}-${{ env.ENV }}-${{ env.SERVICE_NAME }}-nginx
           DOCKER_BUILDKIT: 1
         run: |
-          docker build \
-          -cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
+          docker buildx build \
+          --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
           -f infra/docker/nginx/Dockerfile \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
