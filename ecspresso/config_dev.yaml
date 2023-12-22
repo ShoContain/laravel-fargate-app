@@ -1,0 +1,28 @@
+region: ap-northeast-1
+cluster: example-dev-foobar
+service: example-dev-foobar
+service_definition: ecs-service-def.json
+task_definition: ecs-task-def.json
+timeout: "10m0s"
+plugins:
+   - name: tfstate
+     config:
+       url: s3://laravel-fargate-app-terraform-637137270881/example/dev/app/foobar_v1.5.6.tfstate
+     func_prefix: app_
+   - name: tfstate
+     config:
+       url: s3://laravel-fargate-app-terraform-637137270881/example/dev/network/main_v1.5.6.tfstate
+     func_prefix: network_
+   - name: tfstate
+     config:
+       url: s3://laravel-fargate-app-terraform-637137270881/example/dev/log/app_foobar_v1.5.6.tfstate
+     func_prefix: app_foobar_log_
+   - name: tfstate
+     config:
+        url: s3://laravel-fargate-app-terraform-637137270881/example/dev/cicd/app_foobar_v1.5.6.tfstate
+     func_prefix: cicd_
+   - name: tfstate
+     config:
+        url: s3://laravel-fargate-app-terraform-637137270881/example/dev/routing/web_server_prod_click_v1.5.6.tfstate
+     func_prefix: routing_
+

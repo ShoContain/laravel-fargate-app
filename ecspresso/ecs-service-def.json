@@ -12,10 +12,7 @@
       "rollback": false
     },
     "maximumPercent": 200,
-    "minimumHealthyPercent": 50
-  },
-  "deploymentController": {
-    "type": "ECS"
+    "minimumHealthyPercent": 100
   },
   "desiredCount": 1,
   "enableECSManagedTags": false,
@@ -26,27 +23,26 @@
     {
       "containerName": "nginx",
       "containerPort": 80,
-      "targetGroupArn": "{{ routing_tfstate `aws_lb_target_group.foobar.arn` }}"
+      "targetGroupArn": "{{ routing_tfstate `aws_lb_target_group.web_server_prod_click.arn` }}"
     }
   ],
   "networkConfiguration": {
     "awsvpcConfiguration": {
       "assignPublicIp": "DISABLED",
       "securityGroups": [
-        "{{ network_tfstate `aws_security_group.vpc.id` }}",
-        "{{ network_tfstate `aws_security_group.db_foobar.id` }}",
-        "{{ network_tfstate `aws_security_group.cache_foobar.id` }}"
+        "{{ network_tfstate `aws_security_group.vpc.id` }}"
       ],
       "subnets": [
-        "{{ app_tfstate `data.terraform_remote_state.network_main.outputs.private_subnet_ids[0]` }}",
-        "{{ app_tfstate `data.terraform_remote_state.network_main.outputs.private_subnet_ids[1]` }}"
+        "{{ network_tfstate `aws_subnet.private['a'].id` }}",
+        "{{ network_tfstate `aws_subnet.private['c'].id` }}"
       ]
     }
   },
-  "platformFamily": "Linux",
+  "placementConstraints": [],
+  "placementStrategy": [],
   "platformVersion": "1.4.0",
-  "propagateTags": "NONE",
   "schedulingStrategy": "REPLICA",
+  "serviceRegistries": [],
   "tags": [
     {
       "key": "Env",
@@ -54,11 +50,11 @@
     },
     {
       "key": "System",
-      "value": "{{ must_env `SYSTEM_NAME`}}"
+      "value": "{{ must_env `SYSTEM_NAME` }}"
     },
     {
       "key": "Name",
-      "value": "{{ must_env `SYSTEM_NAME`}}-{{ must_env `ENV_NAME` }}-{{ must_env `SERVICE_NAME` }}"
+      "value": "{{ must_env `SYSTEM_NAME` }}-{{ must_env `ENV_NAME` }}-{{ must_env `SERVICE_NAME` }}"
     }
   ]
 }

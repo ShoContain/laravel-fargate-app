@@ -19,11 +19,11 @@ jobs:
     steps:
       - name: Set env vars for prod
         if: github.ref == 'refs/heads/main'
-        run: echo "ENV=prod" >> $GITHUB_ENV
+        run: echo "ENV_NAME=prod" >> $GITHUB_ENV
 
       - name: Set env vars for dev
         if: github.ref == 'refs/heads/develop'
-        run: echo "ENV=dev" >> $GITHUB_ENV
+        run: echo "ENV_NAME=dev" >> $GITHUB_ENV
 
       - name: Configure AWS credentials for prod
         if: github.ref == 'refs/heads/main'
@@ -80,7 +80,7 @@ jobs:
       - name: Build, tag, and push nginx image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.SYSTEM_NAME }}-${{ env.ENV }}-${{ env.SERVICE_NAME }}-nginx
+          ECR_REPOSITORY: ${{ env.SYSTEM_NAME }}-${{ env.ENV_NAME }}-${{ env.SERVICE_NAME }}-nginx
           DOCKER_BUILDKIT: 1
         run: |
           docker buildx build \
@@ -94,7 +94,7 @@ jobs:
       - name: Build, tag, and push php image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.amazon-ecr-login.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.SYSTEM_NAME }}-${{ env.ENV }}-${{ env.SERVICE_NAME }}-php
+          ECR_REPOSITORY: ${{ env.SYSTEM_NAME }}-${{ env.ENV_NAME }}-${{ env.SERVICE_NAME }}-php
           DOCKER_BUILDKIT: 1
         run: |
           docker buildx build \
@@ -104,3 +104,13 @@ jobs:
           -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
+
+      # TODO: deployはJobを分ける
+      - name: Install ecspresso
+        uses: kayac/ecspresso@v2
+        with:
+          version: v2.0.0
+  
+      - name: Deploy to ECS
+        run: ecspresso deploy --config config_$ENV_NAME.yaml
+        working-directory: ./ecspresso
