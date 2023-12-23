@@ -11,7 +11,7 @@
       ],
       "environment": [],
       "essential": true,
-      "image": "{{ app_tfstate `module.nginx.aws_ecr_repository.this.arn` }}:{{ must_env `IMAGE_TAG` }}",
+      "image": "{{ app_tfstate `module.nginx.aws_ecr_repository.this.repository_url` }}:{{ must_env `IMAGE_TAG` }}",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -34,14 +34,14 @@
         }
       ],
       "secrets": [],
-      "volumesForm": []
+      "volumesFrom": []
     },
     {
       "name": "php",
       "cpu": 0,
       "environment": [],
       "essential": true,
-      "image": "{{ app_tfstate `module.php.aws_ecr_repository.this` }}:{{ must_env `IMAGE_TAG` }}",
+      "image": "{{ app_tfstate `module.php.aws_ecr_repository.this.repository_url` }}:{{ must_env `IMAGE_TAG` }}",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -61,7 +61,8 @@
           "name": "APP_KEY",
           "valueFrom": "/{{ must_env `SYSTEM_NAME` }}/{{ must_env `ENV_NAME` }}/{{ must_env `SERVICE_NAME` }}/APP_KEY"
         }
-      ]
+      ],
+      "volumesFrom": []
     }
   ],
   "cpu": "256",
@@ -87,7 +88,7 @@
       "value": "{{ must_env `SYSTEM_NAME` }}-{{ must_env `ENV_NAME` }}-{{ must_env `SERVICE_NAME` }}"
     }
   ],
-  "taskRoleArn": "{{ app_tfstate `aws_iam_role.ecs_task` }}",
+  "taskRoleArn": "{{ app_tfstate `aws_iam_role.ecs_task.arn` }}",
   "volumes": [
     {
       "host": {},
