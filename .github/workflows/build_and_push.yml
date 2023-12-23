@@ -23,7 +23,9 @@ jobs:
 
       - name: Set env vars for dev
         if: github.ref == 'refs/heads/develop'
-        run: echo "ENV_NAME=dev" >> $GITHUB_ENV
+        run: |
+          echo "ENV_NAME=dev" >> $GITHUB_ENV
+          echo "VPC_CIDR=172.31.0.0/16" >> $GITHUB_ENV
 
       - name: Configure AWS credentials for prod
         if: github.ref == 'refs/heads/main'
@@ -105,7 +107,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
 
-      # TODO: deployはJobを分ける
+      # TODO: envのアップロードとdeployはJobを分ける
       - name: Upload env file
         run: aws s3 cp .env.$ENV_NAME s3://laravel-fargate-app-$SYSTEM_NAME-$ENV_NAME-$SERVICE_NAME-env-file/$IMAGE_TAG/.env
         working-directory: backend
