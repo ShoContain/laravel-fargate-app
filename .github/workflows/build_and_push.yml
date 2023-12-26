@@ -86,11 +86,9 @@ jobs:
           DOCKER_BUILDKIT: 1
         run: |
           docker buildx build \
-          --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
+          --build-arg BUILDKIT_INLINE_CACHE=1 . \
           -f infra/docker/nginx/Dockerfile \
-          -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
 
       - name: Build, tag, and push php image to Amazon ECR
@@ -100,11 +98,9 @@ jobs:
           DOCKER_BUILDKIT: 1
         run: |
           docker buildx build \
-          --cache-from=$ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg BUILDKIT_INLINE_CACHE=1 . \
+          --build-arg BUILDKIT_INLINE_CACHE=1 . \
           -f infra/docker/php/Dockerfile \
-          -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }}
 
       # TODO: envのアップロードとdeployはJobを分ける
