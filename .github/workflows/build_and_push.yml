@@ -113,6 +113,19 @@ jobs:
         with:
           version: v2.0.0
 
-      - name: Deploy to ECS
+      # 新しいリビジョンのタスク定義のみ行う
+      - name: Register task definition
+        run: ecspresso register --config config_$ENV_NAME.yaml
+        working-directory: ./ecspresso
+
+      - name: Migrate database
+        run: |
+          ecspresso run --config config_$ENV_NAME.yaml \
+          --latest-task-definition \
+          --watch-container=php \
+          --overrides '{"containerOverrides":[{"name":"nginx","command": ["nginx","-v"]}, {"name":"php","command":["php","artisan","migrate","--force"]}]}'
+        working-directory: ./ecspresso
+
+      - name: Deploy service
         run: ecspresso deploy --config config_$ENV_NAME.yaml
         working-directory: ./ecspresso

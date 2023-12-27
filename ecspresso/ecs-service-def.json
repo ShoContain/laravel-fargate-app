@@ -14,7 +14,7 @@
     "maximumPercent": 200,
     "minimumHealthyPercent": 100
   },
-  "desiredCount": 0,
+  "desiredCount": 1,
   "enableECSManagedTags": false,
   "enableExecuteCommand": true,
   "healthCheckGracePeriodSeconds": 60,
@@ -30,7 +30,8 @@
     "awsvpcConfiguration": {
       "assignPublicIp": "DISABLED",
       "securityGroups": [
-        "{{ network_tfstate `aws_security_group.vpc.id` }}"
+        "{{ network_tfstate `aws_security_group.vpc.id` }}",
+        "{{ network_tfstate `aws_security_group.db_foobar.id` }}"
       ],
       "subnets": [
         "{{ network_tfstate `aws_subnet.private['a'].id` }}",
